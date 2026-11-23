@@ -15,6 +15,7 @@
   --due:#b42318; --due-tint:#fdeceb;
   --open:#8a5300; --open-tint:#fcf1de;
   --check:#44566c; --check-tint:#eaeef3;
+  --meet:#1d4ed8; --meet-tint:#e5ecfc;
   --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
   --body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -27,6 +28,7 @@
     --due:#ff8c80; --due-tint:#3a1d1b;
     --open:#f0b95a; --open-tint:#3a2d14;
     --check:#a9b9cc; --check-tint:#232e3a;
+  --meet:#8fb2ff; --meet-tint:#1a2a4a;
     color-scheme:dark;
   }
 }
@@ -36,6 +38,7 @@
   --due:#ff8c80; --due-tint:#3a1d1b;
   --open:#f0b95a; --open-tint:#3a2d14;
   --check:#a9b9cc; --check-tint:#232e3a;
+  --meet:#8fb2ff; --meet-tint:#1a2a4a;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -52,7 +55,7 @@ h1{font:700 34px/1.1 var(--display);margin:0;letter-spacing:-.01em;text-wrap:bal
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
-.sw.due{background:var(--due)} .sw.open{background:var(--open)} .sw.check{background:var(--check)}
+.sw.due{background:var(--due)} .sw.open{background:var(--open)} .sw.check{background:var(--check)} .sw.meet{background:var(--meet)}
 .sw.watch{border:2px dashed var(--muted)}
 
 /* next-up strip */
@@ -90,6 +93,7 @@ h1{font:700 34px/1.1 var(--display);margin:0;letter-spacing:-.01em;text-wrap:bal
 .chip.due{background:var(--due-tint);border-color:var(--due);color:var(--due);font-weight:600}
 .chip.open{background:var(--open-tint);border-color:var(--open);color:var(--open);font-weight:600}
 .chip.check{background:var(--check-tint);border-color:var(--check);color:var(--check)}
+.chip.meet{background:var(--meet-tint);border-color:var(--meet);color:var(--meet);font-weight:600}
 .chip.watch{background:transparent;border:1px dashed var(--muted);border-left:3px dashed var(--muted);color:var(--muted)}
 .chip.past{opacity:.5}
 .chip[aria-pressed="true"]{box-shadow:0 0 0 2px var(--brand)}
@@ -99,7 +103,7 @@ h1{font:700 34px/1.1 var(--display);margin:0;letter-spacing:-.01em;text-wrap:bal
 .detail{padding:20px;position:sticky;top:16px;display:flex;flex-direction:column;gap:12px}
 .badge{align-self:flex-start;font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;padding:5px 8px;border-radius:5px}
 .badge.due{background:var(--due-tint);color:var(--due)} .badge.open{background:var(--open-tint);color:var(--open)}
-.badge.check{background:var(--check-tint);color:var(--check)} .badge.watch{border:1px dashed var(--muted);color:var(--muted)}
+.badge.check{background:var(--check-tint);color:var(--check)} .badge.meet{background:var(--meet-tint);color:var(--meet)} .badge.watch{border:1px dashed var(--muted);color:var(--muted)}
 .detail h3{font:700 22px/1.2 var(--display);margin:0;text-wrap:balance}
 .when{font:500 13px/1.4 var(--mono);color:var(--ink)}
 .cd{color:var(--muted);font-family:var(--body);font-size:13px}
@@ -125,7 +129,7 @@ ul.plain{margin:0;padding-left:18px;font-size:14px}
 .row .tt small{display:block;color:var(--muted);font-size:12px}
 .row .c{font:500 12px/1 var(--mono);color:var(--muted);white-space:nowrap}
 .row.past{opacity:.5}
-.row .dt.due{color:var(--due)} .row .dt.open{color:var(--open)}
+.row .dt.due{color:var(--due)} .row .dt.open{color:var(--open)} .row .dt.meet{color:var(--meet)}
 .roll{display:flex;flex-direction:column}
 .rf{padding:11px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
 .rf:first-child{border-top:0;padding-top:0}
@@ -146,7 +150,7 @@ footer{font-size:12px;color:var(--muted)}
   .cell{min-height:58px;padding:4px 3px;gap:3px;align-items:center}
   .dn{align-self:center}
   .chip{height:7px;padding:0;border-radius:4px;border-width:0;font-size:0;line-height:0;background:var(--due)}
-  .chip.open{background:var(--open)} .chip.check{background:var(--check)}
+  .chip.open{background:var(--open)} .chip.check{background:var(--check)} .chip.meet{background:var(--meet)}
   .chip.watch{background:none;border:1.5px dashed var(--muted)}
   .chip .tm{display:none}
   .dow div{padding-left:0;text-align:center}
@@ -168,7 +172,7 @@ footer{font-size:12px;color:var(--muted)}
     <div class="legend" aria-label="Legend">
       <span><i class="sw due"></i>Deadline</span>
       <span><i class="sw open"></i>Window opens</span>
-      <span><i class="sw check"></i>Meeting</span>
+      <span><i class="sw meet"></i>Meeting</span>
     </div>
   </header>
 
@@ -214,7 +218,7 @@ const EVENTS = [
   {id:"e3",date:"2026-12-04",type:"due",chip:"Bothin · application due",title:"Bothin Foundation application due",when:"Fri, Dec 4, 2026",f:"bothin"},
   {id:"e4",date:"2027-01-01",type:"due",chip:"Doyuti T'uhkama · LOI due",title:"Doyuti T'uhkama LOI due",when:"Fri, Jan 1, 2027",f:"doyuti",
     note:"Due date falls on New Year's Day. The tracker lists no time of day."},
-  {id:"e9",date:"2027-01-05",type:"check",chip:"Hydra · Salesforce meeting",tm:"11:00 AM PT",title:"Hydra - Salesforce Meeting",when:"Tue, Jan 5, 2027 · 11:00 AM PT"},
+  {id:"e9",date:"2027-01-05",type:"meet",chip:"Hydra · Salesforce meeting",tm:"11:00 AM PT",title:"Hydra - Salesforce Meeting",when:"Tue, Jan 5, 2027 · 11:00 AM PT"},
   {id:"e5",date:"2027-01-18",type:"open",chip:"Irwin · window opens",tm:"9:00 AM PT",title:"Irwin application window opens",when:"Mon, Jan 18, 2027 · 9:00 AM PT",f:"irwin",
     note:"Window runs Jan 18 at 9:00 AM PST through Jan 29 at 5:00 PM PST."},
   {id:"e6",date:"2027-01-29",type:"due",chip:"Irwin · window closes",tm:"5:00 PM PT",title:"Irwin application window closes",when:"Fri, Jan 29, 2027 · 5:00 PM PT",f:"irwin"},
@@ -232,7 +236,7 @@ const now = new Date(); const TODAY = new Date(now.getFullYear(),now.getMonth(),
 const diff = s => Math.round((pd(s)-TODAY)/864e5);
 const cdText = s => { const n=diff(s); return n===0?"Today":n>0?(n===1?"Tomorrow":"In "+n+" days"):(Math.abs(n)===1?"Yesterday":Math.abs(n)+" days ago"); };
 const el = (t,c,x) => { const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
-const TYPE = {due:"Deadline",open:"Window opens",check:"Meeting"};
+const TYPE = {due:"Deadline",open:"Window opens",meet:"Meeting"};
 
 let sel = null, month = null;
 
