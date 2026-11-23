@@ -168,6 +168,7 @@ footer{font-size:12px;color:var(--muted)}
     <div class="legend" aria-label="Legend">
       <span><i class="sw due"></i>Deadline</span>
       <span><i class="sw open"></i>Window opens</span>
+      <span><i class="sw check"></i>Meeting</span>
     </div>
   </header>
 
@@ -213,6 +214,7 @@ const EVENTS = [
   {id:"e3",date:"2026-12-04",type:"due",chip:"Bothin · application due",title:"Bothin Foundation application due",when:"Fri, Dec 4, 2026",f:"bothin"},
   {id:"e4",date:"2027-01-01",type:"due",chip:"Doyuti T'uhkama · LOI due",title:"Doyuti T'uhkama LOI due",when:"Fri, Jan 1, 2027",f:"doyuti",
     note:"Due date falls on New Year's Day. The tracker lists no time of day."},
+  {id:"e9",date:"2027-01-05",type:"check",chip:"Hydra · Salesforce meeting",tm:"11:00 AM PT",title:"Hydra - Salesforce Meeting",when:"Tue, Jan 5, 2027 · 11:00 AM PT"},
   {id:"e5",date:"2027-01-18",type:"open",chip:"Irwin · window opens",tm:"9:00 AM PT",title:"Irwin application window opens",when:"Mon, Jan 18, 2027 · 9:00 AM PT",f:"irwin",
     note:"Window runs Jan 18 at 9:00 AM PST through Jan 29 at 5:00 PM PST."},
   {id:"e6",date:"2027-01-29",type:"due",chip:"Irwin · window closes",tm:"5:00 PM PT",title:"Irwin application window closes",when:"Fri, Jan 29, 2027 · 5:00 PM PT",f:"irwin"},
@@ -230,7 +232,7 @@ const now = new Date(); const TODAY = new Date(now.getFullYear(),now.getMonth(),
 const diff = s => Math.round((pd(s)-TODAY)/864e5);
 const cdText = s => { const n=diff(s); return n===0?"Today":n>0?(n===1?"Tomorrow":"In "+n+" days"):(Math.abs(n)===1?"Yesterday":Math.abs(n)+" days ago"); };
 const el = (t,c,x) => { const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
-const TYPE = {due:"Deadline",open:"Window opens"};
+const TYPE = {due:"Deadline",open:"Window opens",check:"Meeting"};
 
 let sel = null, month = null;
 
