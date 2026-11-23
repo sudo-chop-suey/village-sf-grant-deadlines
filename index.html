@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Village SF Grant Deadlines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Layout: one large month grid with a detail panel beside it; dated agenda and rolling funders below. */
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --ink:#18212b; --muted:#5b6675; --line:#dde2e9;
+  --brand:#0e5a63; --brand-tint:#e2f0f1;
+  --due:#b42318; --due-tint:#fdeceb;
+  --open:#8a5300; --open-tint:#fcf1de;
+  --check:#44566c; --check-tint:#eaeef3;
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f151b; --surface:#171f27; --ink:#e8edf2; --muted:#9aa6b4; --line:#2a3541;
+    --brand:#6cc3cc; --brand-tint:#16363b;
+    --due:#ff8c80; --due-tint:#3a1d1b;
+    --open:#f0b95a; --open-tint:#3a2d14;
+    --check:#a9b9cc; --check-tint:#232e3a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f151b; --surface:#171f27; --ink:#e8edf2; --muted:#9aa6b4; --line:#2a3541;
+  --brand:#6cc3cc; --brand-tint:#16363b;
+  --due:#ff8c80; --due-tint:#3a1d1b;
+  --open:#f0b95a; --open-tint:#3a2d14;
+  --check:#a9b9cc; --check-tint:#232e3a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+a{color:var(--brand)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 20px 56px;display:flex;flex-direction:column;gap:24px}
+
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px}
+h1{font:700 34px/1.1 var(--display);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:6px 0 0;font-size:14px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw.due{background:var(--due)} .sw.open{background:var(--open)} .sw.check{background:var(--check)}
+.sw.watch{border:2px dashed var(--muted)}
+
+/* next-up strip */
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.nx{display:flex;gap:14px;align-items:center;padding:14px 16px;text-align:left;cursor:pointer;border-left:4px solid var(--due)}
+.nx:hover{border-color:var(--due)}
+.nx .n{font:700 34px/1 var(--display);min-width:56px;color:var(--due);font-variant-numeric:tabular-nums}
+.nx .n small{display:block;font:500 11px/1.2 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.nx b{display:block;font-weight:600}
+.nx span.d{color:var(--muted);font-size:13px}
+
+/* main grid */
+.main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+.cal{padding:18px}
+.calhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.calhead h2{font:700 24px/1.1 var(--display);margin:0;min-width:180px}
+.nav{display:flex;gap:6px;align-items:center}
+.nav button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px}
+.nav button:hover:not(:disabled){border-color:var(--brand);color:var(--brand)}
+.nav button:disabled{opacity:.35;cursor:default}
+.pills{display:flex;gap:4px;flex-wrap:wrap}
+.pills button[aria-current="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface)}
+.dow,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.dow{font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding-bottom:8px}
+.dow div{padding-left:6px}
+.grid{border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.cell{border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:112px;padding:6px;display:flex;flex-direction:column;gap:4px;position:relative;background:var(--surface)}
+.cell.out{background:var(--bg)}
+.cell.out .dn{opacity:.45}
+.cell.win::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--open)}
+.dn{font:500 12px/1 var(--mono);color:var(--muted);height:22px;min-width:22px;display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;padding:0 4px;border-radius:11px;font-variant-numeric:tabular-nums}
+.cell.today .dn{background:var(--ink);color:var(--surface)}
+.chip{display:block;width:100%;text-align:left;border:0;border-left:3px solid;border-radius:4px;padding:3px 6px;font-size:12px;line-height:1.3;cursor:pointer}
+.chip.due{background:var(--due-tint);border-color:var(--due);color:var(--due);font-weight:600}
+.chip.open{background:var(--open-tint);border-color:var(--open);color:var(--open);font-weight:600}
+.chip.check{background:var(--check-tint);border-color:var(--check);color:var(--check)}
+.chip.watch{background:transparent;border:1px dashed var(--muted);border-left:3px dashed var(--muted);color:var(--muted)}
+.chip.past{opacity:.5}
+.chip[aria-pressed="true"]{box-shadow:0 0 0 2px var(--brand)}
+.chip .tm{display:block;font:500 11px/1.2 var(--mono);opacity:.85}
+
+/* detail */
+.detail{padding:20px;position:sticky;top:16px;display:flex;flex-direction:column;gap:12px}
+.badge{align-self:flex-start;font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;padding:5px 8px;border-radius:5px}
+.badge.due{background:var(--due-tint);color:var(--due)} .badge.open{background:var(--open-tint);color:var(--open)}
+.badge.check{background:var(--check-tint);color:var(--check)} .badge.watch{border:1px dashed var(--muted);color:var(--muted)}
+.detail h3{font:700 22px/1.2 var(--display);margin:0;text-wrap:balance}
+.when{font:500 13px/1.4 var(--mono);color:var(--ink)}
+.cd{color:var(--muted);font-family:var(--body);font-size:13px}
+dl{margin:0;display:grid;grid-template-columns:84px 1fr;gap:8px 12px;font-size:14px}
+dt{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+dd{margin:0}
+.note{background:var(--bg);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:14px}
+ul.plain{margin:0;padding-left:18px;font-size:14px}
+
+/* lists */
+.lists{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+.panel{padding:18px}
+.panel h2{font:700 20px/1.2 var(--display);margin:0 0 4px}
+.panel p.s{margin:0 0 12px;color:var(--muted);font-size:13px}
+.ag{display:flex;flex-direction:column}
+.ag h4{font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:14px 0 6px}
+.ag h4:first-child{margin-top:0}
+.row{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 6px;border-top:1px solid var(--line);background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;cursor:pointer;width:100%}
+.row:hover{background:var(--bg)}
+.row .dt{font:500 13px/1.2 var(--mono);font-variant-numeric:tabular-nums}
+.row .tt{font-size:14px}
+.row .tt small{display:block;color:var(--muted);font-size:12px}
+.row .c{font:500 12px/1 var(--mono);color:var(--muted);white-space:nowrap}
+.row.past{opacity:.5}
+.row .dt.due{color:var(--due)} .row .dt.open{color:var(--open)}
+.roll{display:flex;flex-direction:column}
+.rf{padding:11px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
+.rf:first-child{border-top:0;padding-top:0}
+.rf b{font-weight:600}
+.rf .m{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:12px;color:var(--muted)}
+.rf .a{font-size:13px}
+.tag{font:500 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--line);border-radius:4px;padding:3px 5px;color:var(--muted)}
+.tag.hi{border-color:var(--brand);color:var(--brand)}
+footer{font-size:12px;color:var(--muted)}
+
+@media (max-width:960px){
+  .main,.lists{grid-template-columns:minmax(0,1fr)}
+  .detail{position:static}
+}
+@media (max-width:640px){
+  h1{font-size:28px}
+  .cal{padding:12px 8px}
+  .cell{min-height:58px;padding:4px 3px;gap:3px;align-items:center}
+  .dn{align-self:center}
+  .chip{height:7px;padding:0;border-radius:4px;border-width:0;font-size:0;line-height:0;background:var(--due)}
+  .chip.open{background:var(--open)} .chip.check{background:var(--check)}
+  .chip.watch{background:none;border:1.5px dashed var(--muted)}
+  .chip .tm{display:none}
+  .dow div{padding-left:0;text-align:center}
+  .row{grid-template-columns:54px minmax(0,1fr)}
+  .row .c{display:none}
+}
+@media (prefers-reduced-motion:no-preference){
+  .chip,.row,.nav button{transition:box-shadow .12s,background .12s,border-color .12s}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Village SF Grant Deadlines</h1>
+      <p class="sub">Upcoming application deadlines and submission windows for Village SF.</p>
+    </div>
+    <div class="legend" aria-label="Legend">
+      <span><i class="sw due"></i>Deadline</span>
+      <span><i class="sw open"></i>Window opens</span>
+    </div>
+  </header>
+
+  <section class="next" id="next" aria-label="Next deadlines"></section>
+
+  <div class="main">
+    <section class="card cal" aria-label="Calendar">
+      <div class="calhead">
+        <h2 id="mtitle"></h2>
+        <div class="nav">
+          <div class="pills" id="pills"></div>
+          <button id="prev" aria-label="Previous month">&larr;</button>
+          <button id="nextm" aria-label="Next month">&rarr;</button>
+        </div>
+      </div>
+      <div class="dow" aria-hidden="true"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+      <div class="grid" id="grid"></div>
+    </section>
+    <aside class="card detail" id="detail" aria-live="polite"></aside>
+  </div>
+
+  <div class="lists one">
+    <section class="card panel">
+      <h2>All dates</h2>
+      <p class="s">Select a row to open it on the calendar.</p>
+      <div class="ag" id="agenda"></div>
+    </section>
+  </div>
+
+  <footer>Dates are as published by each funder at the time of posting. Confirm on the funder's site before submitting.</footer>
+</div>
+
+<script>
+/* ---------- data ---------- */
+const F = {
+  irwin:{name:"William G. Irwin Charity Foundation",links:[["Apply portal","https://pfs.smartsimple.us/welcome/irwin"],["Foundation site","https://williamgirwinfoundation.org/"]]},
+  bothin:{name:"Bothin Foundation",links:[["Apply portal","https://bothinfoundation.org/apply/"],["Foundation site","https://bothinfoundation.org/"]]},
+  doyuti:{name:"Doyuti T'uhkama",links:[["Fluxx portal","https://yochadehe.fluxx.io/user_sessions/new"],["Giving page","https://yochadehe.gov/giving/doyuti-tuhkama/"]]},
+  lever:{name:"Lever for Change: Together in Purpose",links:[["Submit application","https://apply.togetherinpurpose.leverforchange.org/submit"],["Program page","https://leverforchange.org/open-calls/together-in-purpose/"]]}
+};
+
+const EVENTS = [
+  {id:"e3",date:"2026-12-04",type:"due",chip:"Bothin · application due",title:"Bothin Foundation application due",when:"Fri, Dec 4, 2026",f:"bothin"},
+  {id:"e4",date:"2027-01-01",type:"due",chip:"Doyuti T'uhkama · LOI due",title:"Doyuti T'uhkama LOI due",when:"Fri, Jan 1, 2027",f:"doyuti",
+    note:"Due date falls on New Year's Day. The tracker lists no time of day."},
+  {id:"e5",date:"2027-01-18",type:"open",chip:"Irwin · window opens",tm:"9:00 AM PT",title:"Irwin application window opens",when:"Mon, Jan 18, 2027 · 9:00 AM PT",f:"irwin",
+    note:"Window runs Jan 18 at 9:00 AM PST through Jan 29 at 5:00 PM PST."},
+  {id:"e6",date:"2027-01-29",type:"due",chip:"Irwin · window closes",tm:"5:00 PM PT",title:"Irwin application window closes",when:"Fri, Jan 29, 2027 · 5:00 PM PT",f:"irwin"},
+  {id:"e8",date:"2027-02-09",type:"due",chip:"Lever · application due",tm:"5:00 PM CT",title:"Lever for Change application due",when:"Tue, Feb 9, 2027 · 5:00 PM Central (3:00 PM PT)",f:"lever"}
+];
+
+
+/* ---------- helpers ---------- */
+const MONTHS = ["2026-12","2027-01","2027-02"];
+const MN = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const pd = s => { const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); };
+const key = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const now = new Date(); const TODAY = new Date(now.getFullYear(),now.getMonth(),now.getDate());
+const diff = s => Math.round((pd(s)-TODAY)/864e5);
+const cdText = s => { const n=diff(s); return n===0?"Today":n>0?(n===1?"Tomorrow":"In "+n+" days"):(Math.abs(n)===1?"Yesterday":Math.abs(n)+" days ago"); };
+const el = (t,c,x) => { const e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; };
+const TYPE = {due:"Deadline",open:"Window opens"};
+
+let sel = null, month = null;
+
+/* ---------- next-up strip ---------- */
+function renderNext(){
+  const box = document.getElementById("next"); box.innerHTML="";
+  EVENTS.filter(e=>e.type==="due" && diff(e.date)>=0).slice(0,4).forEach(e=>{
+    const b = el("button","card nx"); b.type="button";
+    const n = el("div","n"); n.append(String(diff(e.date))); n.append(el("small","","days"));
+    const t = el("div"); const nm=el("b","",F[e.f].name); const dd=el("span","d",e.when); t.append(nm,dd);
+    b.append(n,t); b.onclick=()=>select(e.id,true); box.append(b);
+  });
+}
+
+/* ---------- calendar ---------- */
+function renderPills(){
+  const p=document.getElementById("pills"); p.innerHTML="";
+  MONTHS.forEach(m=>{ const [y,mo]=m.split("-").map(Number);
+    const b=el("button","",MS[mo-1]); b.type="button"; b.setAttribute("aria-current",String(m===month)); b.onclick=()=>{month=m;renderCal();renderPills();};
+    p.append(b); });
+}
+function renderCal(){
+  const [y,mo]=month.split("-").map(Number);
+  document.getElementById("mtitle").textContent = MN[mo-1]+" "+y;
+  const i = MONTHS.indexOf(month);
+  document.getElementById("prev").disabled = i<=0;
+  document.getElementById("nextm").disabled = i>=MONTHS.length-1;
+  const first = new Date(y,mo-1,1); const start = new Date(y,mo-1,1-first.getDay());
+  const lastDay = new Date(y,mo,0); const cells = Math.ceil((first.getDay()+lastDay.getDate())/7)*7;
+  const g=document.getElementById("grid"); g.innerHTML="";
+  for(let c=0;c<cells;c++){
+    const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+c); const k=key(d);
+    const cell=el("div","cell"+(d.getMonth()!==mo-1?" out":"")+(k===key(TODAY)?" today":"")+(k>="2027-01-18"&&k<="2027-01-29"?" win":""));
+    const dn=el("span","dn",String(d.getDate())); cell.append(dn);
+    EVENTS.filter(e=>e.date===k).forEach(e=>{
+      const b=el("button","chip "+e.type+(pd(e.date)<TODAY?" past":"")); b.type="button"; b.dataset.id=e.id;
+      b.setAttribute("aria-pressed",String(e.id===sel)); b.setAttribute("aria-label",TYPE[e.type]+": "+e.title+", "+e.when);
+      b.append(e.chip); if(e.tm){ b.append(el("span","tm",e.tm)); }
+      b.onclick=ev=>{ev.stopPropagation(); select(e.id,false);}; cell.append(b);
+    });
+    if(cell.querySelector(".chip")){ cell.onclick=()=>{ select(cell.querySelector(".chip").dataset.id,false); }; }
+    g.append(cell);
+  }
+}
+
+/* ---------- detail ---------- */
+function renderDetail(){
+  const d=document.getElementById("detail"); d.innerHTML="";
+  const e=EVENTS.find(x=>x.id===sel); if(!e) return;
+  d.append(el("span","badge "+e.type,TYPE[e.type]));
+  d.append(el("h3","",e.title));
+  const w=el("div","when",e.when); w.append(" "); w.append(el("span","cd","· "+cdText(e.date))); d.append(w);
+  if(e.f){
+    const f=F[e.f]; const dl=el("dl");
+    [["Funder",f.name]].forEach(([k,v])=>{dl.append(el("dt","",k),el("dd","",v));});
+    d.append(dl);
+  }
+  if(e.note) d.append(el("div","note",e.note));
+  if(e.f){ const l=el("div","links"); F[e.f].links.forEach(([t,u])=>{const a=el("a","",t); a.href=u; a.target="_blank"; a.rel="noopener"; l.append(a);}); d.append(l); }
+}
+
+/* ---------- agenda + rolling ---------- */
+function renderAgenda(){
+  const a=document.getElementById("agenda"); a.innerHTML=""; let last="";
+  EVENTS.forEach(e=>{
+    const [y,m,dd]=e.date.split("-").map(Number); const mk=MN[m-1]+" "+y;
+    if(mk!==last){ a.append(el("h4","",mk)); last=mk; }
+    const r=el("button","row"+(pd(e.date)<TODAY?" past":"")); r.type="button";
+    r.append(el("span","dt "+e.type,MS[m-1]+" "+dd));
+    const t=el("span","tt",e.f?F[e.f].name:e.title.replace(/^(Monthly|Quarterly) check-in: /,"$1 check-in · "));
+    t.append(el("small","",e.type==="check"&&!e.f?"":TYPE[e.type]+(e.tm?" · "+e.tm:"") ));
+    if(!t.lastChild.textContent) t.lastChild.remove();
+    r.append(t, el("span","c",cdText(e.date)));
+    r.onclick=()=>select(e.id,true); a.append(r);
+  });
+}
+
+/* ---------- state ---------- */
+function select(id,jump){
+  sel=id; const e=EVENTS.find(x=>x.id===id);
+  if(jump){ const m=e.date.slice(0,7); if(MONTHS.includes(m)) month=m; }
+  renderPills(); renderCal(); renderDetail();
+  if(jump && window.matchMedia("(max-width:960px)").matches){ document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"nearest"}); }
+}
+document.getElementById("prev").onclick=()=>{const i=MONTHS.indexOf(month); if(i>0){month=MONTHS[i-1];renderPills();renderCal();}};
+document.getElementById("nextm").onclick=()=>{const i=MONTHS.indexOf(month); if(i<MONTHS.length-1){month=MONTHS[i+1];renderPills();renderCal();}};
+
+const nextDue = EVENTS.find(e=>e.type==="due" && diff(e.date)>=0) || EVENTS[EVENTS.length-1];
+sel = nextDue.id; month = nextDue.date.slice(0,7);
+renderNext(); renderPills(); renderCal(); renderDetail(); renderAgenda();
+</script>
+</body>
+</html>
